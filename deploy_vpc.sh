@@ -11,11 +11,16 @@ mkdir -p ~/.pyenv/cache
 
 pyenv install anaconda3-5.2.0
 
+pip install -U pip
 conda install opencv gdal
 pip install msgpack tensorflow-gpu keras shapely bypy
 
 # 百度云盘下载数据
 
 git clone https://github.com/korewayume/dstl.git
+
+vim ~/.kaggle/kaggle.json
+chmod 600 ~/.kaggle/kaggle.json
+kaggle competitions download -c dstl-satellite-imagery-feature-detection -f three_band.zip
 
 # 安装cuda和cudnn

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import hashlib
 from keras.models import Model, Input
 from keras.layers import Conv2D, MaxPooling2D, Dropout, UpSampling2D, Concatenate
 from keras.optimizers import Adam
@@ -57,6 +58,10 @@ def unet(pretrained_weights=None, input_size=(256, 256, 3), num_classes=10):
     # model.summary()
 
     if pretrained_weights:
+        with open(pretrained_weights, 'rb') as f:
+            md5 = hashlib.md5()
+            md5.update(f.read())
+            print("load weights '{}' MD5: {}".format(pretrained_weights, md5.hexdigest()))
         model.load_weights(pretrained_weights)
 
     return model

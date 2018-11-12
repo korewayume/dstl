@@ -124,11 +124,11 @@ class DataStore(object):
         dataset = gdal.Open(self.raster_filename(image_id, raster_type), GA_ReadOnly)
         return dataset.RasterYSize, dataset.RasterXSize
 
-    def mask_for_image_and_class(self, image_id, raster_type):
+    def mask_for_image_and_class(self, image_id, raster_type, classes):
         xmax_ymin = self.get_image_xmax_ymin(image_id)
         raster_size = self.get_raster_size(image_id, raster_type)
         masks = []
-        for klass in range(1, 11):
+        for klass in classes:
             mask = np.zeros(raster_size, np.float32)
             multipolygon = self.get_multipolygon_by_image_class(image_id, klass)
             mask_klass = vector_to_raster(raster_size, xmax_ymin, multipolygon, klass)

@@ -8,7 +8,7 @@ from .preprocessing import truncate_as_float32, clip_to_tile
 
 class DataGen(Iterator):
 
-    def __init__(self, image_ids, image_type, target_size, batch_size, shuffle=True, seed=None):
+    def __init__(self, image_ids, image_type, target_size, batch_size, classes=None, shuffle=True, seed=None):
         target_height, target_width = target_size
         tile_names = []
         for image_id in image_ids:
@@ -22,6 +22,10 @@ class DataGen(Iterator):
         self.tile_names = np.array(tile_names)
         self.image_type = image_type
         self.target_size = target_size
+        if classes is None:
+            self.classes = list(range(1, 11))
+        else:
+            self.classes = classes
 
     def _get_batches_of_transformed_samples(self, index_array):
         tile_names = self.tile_names[index_array].tolist()
@@ -34,7 +38,8 @@ class DataGen(Iterator):
                 data_store.raster_image(image_id, self.image_type)
             ), self.target_size)[r, c]
             y = clip_to_tile(
-                data_store.mask_for_image_and_class(image_id, self.image_type), self.target_size
+                data_store.mask_for_image_and_class(image_id, self.image_type, self.classes),
+                self.target_size
             )[r, c]
             x_data.append(x)
             y_data.append(y)

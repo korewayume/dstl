@@ -5,12 +5,9 @@ import numpy as np
 
 def truncate_as_float32(image, alpha=0.02):
     float32_image = np.zeros_like(image, dtype=np.float32)
-    shape = image.shape
-    sorted_array = np.sort(image.reshape((-1, shape[-1])), axis=0)
-    length, channels = sorted_array.shape
-    range_interval = np.round(np.array([length * alpha, length * (1 - alpha)])).astype(np.int32)
-    for c in range(channels):
-        min_val, max_val = sorted_array[..., c][range_interval]
+    min_max = np.quantile(image, [alpha, 1 - alpha], axis=[0, 1], interpolation='nearest')
+    for c in range(float32_image.shape[-1]):
+        min_val, max_val = min_max[..., c]
         single_channel = image[..., c].astype(np.float32)
         single_channel[single_channel < min_val] = min_val
         single_channel[single_channel > max_val] = max_val
